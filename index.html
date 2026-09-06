@@ -1742,10 +1742,12 @@ let books = [];
 
       document.getElementById("modalTags")
         .innerHTML = `
-          ${book.genre.map(
-            genre =>
-              `<span class="tag">${genre}</span>`
-          ).join("")}
+          ${String(book.genre || "")
+    .split(",")
+    .map(genre => genre.trim())
+    .filter(Boolean)
+    .map(genre => `<span class="tag">${genre}</span>`)
+    .join("")}
 
           <span class="tag">${book.language}</span>
 
