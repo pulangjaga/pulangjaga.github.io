@@ -1966,6 +1966,19 @@ let books = [];
     document.body.style.overflow = "hidden";
 }
 
+    function confirmPaymentWhatsApp() {
+    if (!selectedBook) return;
+
+    const phone = "6281717427171";
+
+    const message =
+        `Halo, saya ingin konfirmasi pembayaran untuk buku "${selectedBook.title}" seharga ${formatPrice(selectedBook.price)}. Saya lampirkan bukti pembayarannya.`;
+
+    const url =
+        `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+
+    window.open(url, "_blank");
+}
 
     /* =================================
        REQUEST THIS BOOK
