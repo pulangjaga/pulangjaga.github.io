@@ -1737,8 +1737,8 @@ let books = [];
       document.getElementById("modalDescription")
         .textContent = book.description;
 
-      document.getElementById("modalCover")
-        .textContent = book.title;
+      document.getElementById("modalCover").innerHTML =
+    `<img src="${book.cover}" alt="${book.title}">`;
 
       document.getElementById("modalTags")
         .innerHTML = `
