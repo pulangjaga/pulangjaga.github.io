@@ -1505,21 +1505,9 @@
        Google Sheets.
     ================================= */
 
-    const books = [
-      {
-        id: "PJ0001",
-        title: "Wind and Truth",
-        author: "Brandon Sanderson",
-        genre: ["Fantasy"],
-        language: "English",
-        price: 49000,
-        featured: true,
-        newRelease: true,
-        dateAdded: "2026-09-07",
-        description:
-          "Test book untuk katalog awal PulangJaga."
-      }
-    ];
+    const API_URL = "https://script.google.com/macros/s/AKfycbwHYL_pFcwjZSsjPA7rThsEefczMw1QYz4pdSNvFk8npEAiQrjHeDq2eAvUzMStJ9-x/exec";
+
+let books = [];
 
 
     let selectedBook = null;
@@ -1976,10 +1964,34 @@
        INITIALIZE
     ================================= */
 
+    async function loadBooks() {
+  try {
+    const response = await fetch(API_URL);
+
+    if (!response.ok) {
+      throw new Error("Gagal mengambil data katalog.");
+    }
+
+    books = await response.json();
+
     populateGenres();
     renderFeatured();
     renderNewBooks();
     renderCatalog();
+
+  } catch (error) {
+    console.error("Catalog API error:", error);
+
+    books = [];
+
+    populateGenres();
+    renderFeatured();
+    renderNewBooks();
+    renderCatalog();
+  }
+}
+
+loadBooks();
 
   </script>
 
