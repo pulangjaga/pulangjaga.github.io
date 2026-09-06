@@ -1489,6 +1489,57 @@
   </div>
 
 
+<div class="modal" id="paymentModal">
+
+    <div class="modal-box payment-box">
+
+        <button class="modal-close" onclick="closePaymentModal()">
+            ×
+        </button>
+
+        <div class="payment-content">
+
+            <div class="payment-info">
+
+                <div class="payment-label">
+                    Pembayaran
+                </div>
+
+                <h2 id="paymentTitle">
+                    —
+                </h2>
+
+                <div class="payment-price" id="paymentPrice">
+                    —
+                </div>
+
+                <p>
+                    Silakan lakukan pembayaran melalui QRIS.
+                </p>
+
+                <p>
+                    Setelah pembayaran selesai, konfirmasi melalui WhatsApp dengan melampirkan bukti pembayaran.
+                </p>
+
+                <button
+                    class="btn btn-dark"
+                    onclick="confirmPaymentWhatsApp()"
+                >
+                    Konfirmasi Pembayaran via WhatsApp
+                </button>
+
+            </div>
+
+            <div class="qris-placeholder">
+                QRIS
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  
   <!-- =========================
        TOAST
   ========================= -->
@@ -1790,15 +1841,21 @@ let books = [];
 
     function startPurchase() {
 
-      if (!selectedBook) return;
+    if (!selectedBook) return;
 
-      closeModal();
+    closeModal();
 
-      showToast(
-        "Detail pembayaran akan kita siapkan di tahap berikutnya."
-      );
+    document.getElementById("paymentTitle").textContent =
+        selectedBook.title;
 
-    }
+    document.getElementById("paymentPrice").textContent =
+        formatPrice(selectedBook.price);
+
+    document.getElementById("paymentModal")
+        .classList.add("active");
+
+    document.body.style.overflow = "hidden";
+}
 
 
     /* =================================
