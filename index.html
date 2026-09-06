@@ -1924,6 +1924,13 @@ let books = [];
       document.body.style.overflow = "";
     }
 
+    function closePaymentModal() {
+    document
+        .getElementById("paymentModal")
+        .classList.remove("active");
+
+    document.body.style.overflow = "";
+}
 
     function closeModalOutside(event) {
 
