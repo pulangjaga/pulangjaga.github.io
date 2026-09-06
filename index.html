@@ -959,6 +959,25 @@
         width: 100%;
       }
     }
+    /* CSS yang sudah ada sebelumnya */
+
+
+/* CSS PAYMENT — mulai di sini */
+
+.payment-box {
+    ...
+}
+
+...
+
+@media (max-width: 700px) {
+    ...
+}
+
+
+/* CSS PAYMENT — selesai */
+
+</style>
   </style>
 </head>
 
@@ -1531,8 +1550,17 @@
             </div>
 
             <div class="qris-placeholder">
-                QRIS
-            </div>
+    <div class="qris-label" id="qrisLabel">
+        QRIS
+    </div>
+
+    <img
+        id="qrisImage"
+        src="payment/qris.png"
+        alt="QRIS PulangJaga"
+        onload="this.style.display='block'; document.getElementById('qrisLabel').style.display='none';"
+    >
+</div>
 
         </div>
 
