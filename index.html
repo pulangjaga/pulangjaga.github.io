@@ -1539,10 +1539,8 @@ let books = [];
         >
 
           <div class="cover">
-            <div class="cover-placeholder">
-              ${book.title}
-            </div>
-          </div>
+  <img src="${book.cover}" alt="${book.title}" loading="lazy">
+</div>
 
           <div class="book-title-card">
             ${book.title}
