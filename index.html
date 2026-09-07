@@ -2036,60 +2036,52 @@ let books = [];
 
     /* =================================
        REQUEST FORM
-
-       Untuk sekarang menyimpan request
-       lokal sebagai tahap testing.
-
-       Nanti diganti Google Sheets.
     ================================= */
 
-    function submitRequest(event) {
+    async function submitRequest(event) {
+  event.preventDefault();
 
-      event.preventDefault();
+  const form = event.target;
 
-      const request = {
+  const data = {
+    title: document.getElementById("requestTitle").value.trim(),
+    author: document.getElementById("requestAuthor").value.trim(),
+    language: document.getElementById("requestLanguage").value,
+    whatsapp: document.getElementById("requestWhatsapp").value.trim(),
+    note: document.getElementById("requestNote").value.trim()
+  };
 
-        title:
-          document.getElementById("requestTitle").value,
+  const submitButton = form.querySelector('button[type="submit"]');
+  const originalText = submitButton.textContent;
 
-        author:
-          document.getElementById("requestAuthor").value,
+  submitButton.disabled = true;
+  submitButton.textContent = "Mengirim...";
 
-        language:
-          document.getElementById("requestLanguage").value,
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      body: new URLSearchParams(data)
+    });
 
-        whatsapp:
-          document.getElementById("requestWhatsapp").value,
+    const result = await response.json();
 
-        note:
-          document.getElementById("requestNote").value,
-
-        createdAt:
-          new Date().toISOString()
-
-      };
-
-
-      const existing =
-        JSON.parse(
-          localStorage.getItem("pulangjagaRequests") || "[]"
-        );
-
-      existing.push(request);
-
-      localStorage.setItem(
-        "pulangjagaRequests",
-        JSON.stringify(existing)
-      );
-
-
-      event.target.reset();
-
-      showToast(
-        "Request berhasil dikirim."
-      );
-
+    if (!result.success) {
+      throw new Error("Request gagal dikirim.");
     }
+
+    form.reset();
+
+    showToast("Request berhasil dikirim.");
+
+  } catch (error) {
+    console.error("Request error:", error);
+    showToast("Request gagal dikirim. Coba lagi.");
+    
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = originalText;
+  }
+}
 
 
     /* =================================
