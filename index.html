@@ -2060,6 +2060,7 @@ let books = [];
   try {
     await fetch(API_URL, {
       method: "POST",
+      mode: "no-cors",
       body: new URLSearchParams(data)
     });
 
