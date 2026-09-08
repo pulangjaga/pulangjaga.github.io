@@ -1222,6 +1222,106 @@
 .cart-remove:hover {
   text-decoration: underline;
 }
+
+    .checkout-box {
+  max-width: 620px;
+  width: 100%;
+}
+
+.checkout-header {
+  margin-bottom: 24px;
+}
+
+.checkout-header h2 {
+  margin: 0;
+  font-size: 30px;
+}
+
+.checkout-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.checkout-item > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.checkout-item span {
+  font-size: 13px;
+  color: #777;
+}
+
+.checkout-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
+}
+
+.checkout-total span {
+  color: #777;
+  font-size: 14px;
+}
+
+.checkout-total strong {
+  font-size: 22px;
+}
+
+.checkout-form {
+  margin-top: 28px;
+}
+
+.checkout-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.checkout-form input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.checkout-form input:focus {
+  outline: none;
+  border-color: #111;
+}
+
+.checkout-note {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #777;
+}
+
+.checkout-pay-btn {
+  width: 100%;
+  margin-top: 24px;
+}
+
+@media (max-width: 600px) {
+  .checkout-item {
+    gap: 12px;
+  }
+
+  .checkout-header h2 {
+    font-size: 26px;
+  }
+}
   </style>
 </head>
 
@@ -2490,6 +2590,87 @@ function removeCartItem(bookId) {
   updateCartCount();
   renderCart();
 }
+
+
+    function startCheckout() {
+  if (!cart.length) {
+    showToast("Cart masih kosong.");
+    return;
+  }
+
+  renderCheckout();
+
+  closeCart();
+
+  const modal = document.getElementById("checkoutModal");
+  modal.classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeCheckout() {
+  const modal = document.getElementById("checkoutModal");
+  modal.classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+function renderCheckout() {
+  const container = document.getElementById("checkoutItems");
+  const totalElement = document.getElementById("checkoutTotal");
+
+  let total = 0;
+
+  container.innerHTML = cart.map(item => {
+    const book = books.find(book => book.id === item.id);
+
+    if (!book) return "";
+
+    const itemTotal = Number(book.price) * item.quantity;
+    total += itemTotal;
+
+    return `
+      <div class="checkout-item">
+        <div>
+          <strong>${book.title}</strong>
+          <span>${item.quantity} × ${formatPrice(book.price)}</span>
+        </div>
+
+        <strong>${formatPrice(itemTotal)}</strong>
+      </div>
+    `;
+  }).join("");
+
+  totalElement.textContent = formatPrice(total);
+}
+
+
+function processCheckout() {
+  const emailInput = document.getElementById("checkoutEmail");
+  const email = emailInput.value.trim();
+
+  if (!email) {
+    emailInput.focus();
+    showToast("Masukkan email terlebih dahulu.");
+    return;
+  }
+
+  if (!emailInput.checkValidity()) {
+    emailInput.focus();
+    showToast("Masukkan alamat email yang valid.");
+    return;
+  }
+
+  const orderId =
+    "PJ-" +
+    Date.now();
+
+  console.log("Checkout ready:", {
+    orderId: orderId,
+    email: email,
+    cart: cart
+  });
+
+  showToast("Order berhasil dibuat.");
+}
     
     
     async function loadBooks() {
@@ -2543,6 +2724,44 @@ updateCartCount();
         Checkout
       </button>
     </div>
+  </div>
+</div>
+
+<div class="modal" id="checkoutModal">
+  <div class="modal-box checkout-box">
+    <button class="modal-close" onclick="closeCheckout()">×</button>
+
+    <div class="checkout-header">
+      <div class="payment-label">Checkout</div>
+      <h2>Complete your order</h2>
+    </div>
+
+    <div id="checkoutItems"></div>
+
+    <div class="checkout-total">
+      <span>Total</span>
+      <strong id="checkoutTotal">Rp0</strong>
+    </div>
+
+    <div class="checkout-form">
+      <label for="checkoutEmail">Email</label>
+      <input
+        type="email"
+        id="checkoutEmail"
+        placeholder="nama@email.com"
+        required
+      >
+      <p class="checkout-note">
+        File EPUB akan dikirim ke email ini setelah pembayaran berhasil.
+      </p>
+    </div>
+
+    <button
+      class="btn btn-dark checkout-pay-btn"
+      onclick="processCheckout()"
+    >
+      Continue to Payment
+    </button>
   </div>
 </div>
     
