@@ -1894,14 +1894,13 @@
           <p class="modal-description" id="modalDescription"></p>
 
           <div class="modal-actions">
-            <button class="btn btn-dark" onclick="startPurchase()">
-              Beli Buku
-            </button>
-
-            <button class="btn btn-light" onclick="requestThisBook()">
-              Request Judul
-            </button>
-          </div>
+  <button
+    class="btn btn-dark"
+    onclick="addToCartFromModal()"
+  >
+    Add to Cart
+  </button>
+</div>
 
         </div>
 
@@ -1911,66 +1910,6 @@
 
   </div>
 
-
-<div class="modal" id="paymentModal">
-
-    <div class="modal-box payment-box">
-
-        <button class="modal-close" onclick="closePaymentModal()">
-            ×
-        </button>
-
-        <div class="payment-content">
-
-            <div class="payment-info">
-
-                <div class="payment-label">
-                    Pembayaran
-                </div>
-
-                <h2 id="paymentTitle">
-                    —
-                </h2>
-
-                <div class="payment-price" id="paymentPrice">
-                    —
-                </div>
-
-                <p>
-                    Silakan lakukan pembayaran melalui QRIS.
-                </p>
-
-                <p>
-                    Setelah pembayaran selesai, konfirmasi melalui WhatsApp dengan melampirkan bukti pembayaran.
-                </p>
-
-                <button
-                    class="btn btn-dark"
-                    onclick="confirmPaymentWhatsApp()"
-                >
-                    Konfirmasi Pembayaran via WhatsApp
-                </button>
-
-            </div>
-
-            <div class="qris-placeholder">
-    <div class="qris-label" id="qrisLabel">
-        QRIS
-    </div>
-
-    <img
-        id="qrisImage"
-        src="payment/qris.png"
-        alt="QRIS PulangJaga"
-        onload="this.style.display='block'; document.getElementById('qrisLabel').style.display='none';"
-    >
-</div>
-
-        </div>
-
-    </div>
-
-</div>
   
   <!-- =========================
        TOAST
@@ -2242,84 +2181,11 @@ let cart = JSON.parse(
       document.body.style.overflow = "";
     }
 
-    function closePaymentModal() {
-    document
-        .getElementById("paymentModal")
-        .classList.remove("active");
-
-    document.body.style.overflow = "";
-}
-
     function closeModalOutside(event) {
 
       if (event.target.id === "bookModal") {
         closeModal();
       }
-
-    }
-
-
-    /* =================================
-       PURCHASE
-
-       QRIS/payment akan kita sambungkan
-       pada tahap berikutnya.
-    ================================= */
-
-    function startPurchase() {
-
-    if (!selectedBook) return;
-
-    closeModal();
-
-    document.getElementById("paymentTitle").textContent =
-        selectedBook.title;
-
-    document.getElementById("paymentPrice").textContent =
-        formatPrice(selectedBook.price);
-
-    document.getElementById("paymentModal")
-        .classList.add("active");
-
-    document.body.style.overflow = "hidden";
-}
-
-    function confirmPaymentWhatsApp() {
-    if (!selectedBook) return;
-
-    const phone = "6281717427171";
-
-    const message =
-        `Halo, saya ingin konfirmasi pembayaran untuk buku "${selectedBook.title}" seharga ${formatPrice(selectedBook.price)}. Saya lampirkan bukti pembayarannya.`;
-
-    const url =
-        `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-
-    window.open(url, "_blank");
-}
-
-    /* =================================
-       REQUEST THIS BOOK
-    ================================= */
-
-    function requestThisBook() {
-
-      if (!selectedBook) return;
-
-      const title =
-        selectedBook.title;
-
-      closeModal();
-
-      document
-        .getElementById("requestTitle")
-        .value = title;
-
-      document
-        .getElementById("request")
-        .scrollIntoView({
-          behavior: "smooth"
-        });
 
     }
 
@@ -2473,7 +2339,13 @@ function addToCart(bookId) {
   showToast(`${book.title} ditambahkan ke cart.`);
 }
 
+function addToCartFromModal() {
+  if (!selectedBook) return;
 
+  addToCart(selectedBook.id);
+  closeModal();
+}
+    
     function updateCartCount() {
   const count = cart.reduce(
     (total, item) => total + item.quantity,
