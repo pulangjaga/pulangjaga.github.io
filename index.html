@@ -2709,6 +2709,8 @@ async function processCheckout() {
 
     const result = await response.json();
 
+    console.log("Midtrans response:", result);
+
     if (!result.success) {
       throw new Error(
         result.error || "Gagal membuat pembayaran."
