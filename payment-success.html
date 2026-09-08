@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Payment Successful — Pulangjaga</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: #f7f7f5;
+      color: #111;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .success-box {
+      width: 100%;
+      max-width: 560px;
+      background: #fff;
+      padding: 48px 40px;
+      border-radius: 18px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+    }
+
+    .check {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 24px;
+      border-radius: 50%;
+      background: #f1c40f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .label {
+      margin-bottom: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #777;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 32px;
+      line-height: 1.15;
+    }
+
+    .message {
+      margin: 0 auto 32px;
+      max-width: 440px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .order-info {
+      padding: 20px;
+      margin-bottom: 28px;
+      background: #f7f7f5;
+      border-radius: 12px;
+      text-align: left;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 8px 0;
+    }
+
+    .info-row span:first-child {
+      color: #777;
+    }
+
+    .info-row strong {
+      text-align: right;
+      word-break: break-word;
+    }
+
+    .books {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid #ddd;
+    }
+
+    .book {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 6px 0;
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 13px 22px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      background: #111;
+      color: #fff;
+    }
+
+    @media (max-width: 520px) {
+      .success-box {
+        padding: 36px 24px;
+      }
+
+      h1 {
+        font-size: 27px;
+      }
+
+      .info-row {
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .info-row strong {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="success-box">
+
+    <div class="check">✓</div>
+
+    <div class="label">Pulangjaga</div>
+
+    <h1>Payment Successful</h1>
+
+    <p class="message">
+      Pembayaran kamu sudah diterima.
+      EPUB akan dikirim ke email setelah pembayaran dikonfirmasi.
+    </p>
+
+    <div class="order-info">
+
+      <div class="info-row">
+        <span>Order ID</span>
+        <strong id="orderId">—</strong>
+      </div>
+
+      <div class="info-row">
+        <span>Email</span>
+        <strong id="orderEmail">—</strong>
+      </div>
+
+      <div class="info-row">
+        <span>Total</span>
+        <strong id="orderTotal">—</strong>
+      </div>
+
+      <div class="books">
+        <strong>Books</strong>
+        <div id="orderBooks"></div>
+      </div>
+
+    </div>
+
+    <div class="actions">
+      <a href="index.html" class="btn">
+        Back to Pulangjaga
+      </a>
+    </div>
+
+  </div>
+
+  <script>
+    const order = JSON.parse(
+      localStorage.getItem("pulangjagaLastOrder")
+    );
+
+    const params = new URLSearchParams(window.location.search);
+    const orderIdFromUrl = params.get("orderId");
+
+    if (order) {
+      document.getElementById("orderId").textContent =
+        orderIdFromUrl || order.orderId || "—";
+
+      document.getElementById("orderEmail").textContent =
+        order.email || "—";
+
+      document.getElementById("orderTotal").textContent =
+        "Rp" + Number(order.grossAmount || 0).toLocaleString("id-ID");
+
+      const booksContainer =
+        document.getElementById("orderBooks");
+
+      if (order.items && order.items.length) {
+        booksContainer.innerHTML = order.items
+          .map(item => `
+            <div class="book">
+              <span>${item.name}</span>
+              <strong>x${item.quantity}</strong>
+            </div>
+          `)
+          .join("");
+      }
+    }
+  </script>
+
+</body>
+</html>
