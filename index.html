@@ -2651,7 +2651,7 @@ function renderCheckout() {
 }
 
 
-function processCheckout() {
+async function processCheckout() {
   const emailInput = document.getElementById("checkoutEmail");
   const email = emailInput.value.trim();
 
@@ -2667,17 +2667,83 @@ function processCheckout() {
     return;
   }
 
-  const orderId =
-    "PJ-" +
-    Date.now();
+  if (!cart.length) {
+    showToast("Cart masih kosong.");
+    return;
+  }
 
-  console.log("Checkout ready:", {
-    orderId: orderId,
-    email: email,
-    cart: cart
+  const orderId = "PJ-" + Date.now();
+
+  const items = cart.map(item => {
+    const book = books.find(book => book.id === item.id);
+
+    return {
+      id: book.id,
+      price: Number(book.price),
+      quantity: item.quantity,
+      name: book.title
+    };
   });
 
-  showToast("Order berhasil dibuat.");
+  const grossAmount = items.reduce(
+    (total, item) => total + (item.price * item.quantity),
+    0
+  );
+
+  const formData = new URLSearchParams();
+
+  formData.append("action", "createPayment");
+  formData.append("orderId", orderId);
+  formData.append("grossAmount", grossAmount);
+  formData.append("email", email);
+  formData.append("items", JSON.stringify(items));
+
+  try {
+    const response = await fetch(
+      "https://script.google.com/macros/s/AKfycbwHYL_pFcwjZSsjPA7rThsEefczMw1QYz4pdSNvFk8npEAiQrjHeDq2eAvUzMStJ9-x/exec",
+      {
+        method: "POST",
+        body: formData
+      }
+    );
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(
+        result.error || "Gagal membuat pembayaran."
+      );
+    }
+
+    closeCheckout();
+
+    window.snap.pay(result.token, {
+      onSuccess: function(result) {
+        console.log("Payment success:", result);
+        showToast("Pembayaran berhasil.");
+      },
+
+      onPending: function(result) {
+        console.log("Payment pending:", result);
+        showToast("Pembayaran masih menunggu.");
+      },
+
+      onError: function(result) {
+        console.log("Payment error:", result);
+        showToast("Pembayaran gagal.");
+      },
+
+      onClose: function() {
+        console.log("Payment popup closed.");
+      }
+    });
+
+  } catch (error) {
+    console.error("Checkout error:", error);
+    showToast(
+      error.message || "Gagal menghubungkan ke pembayaran."
+    );
+  }
 }
     
     
