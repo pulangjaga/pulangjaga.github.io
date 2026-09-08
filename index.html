@@ -172,11 +172,15 @@
     }
 
     .hero-grid {
-      display: grid;
-      grid-template-columns: 1.05fr .95fr;
-      align-items: center;
-      gap: 70px;
-    }
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  align-items: center;
+  gap: 70px;
+}
+
+.hero-grid > div:first-child {
+  padding-bottom: 45px;
+}
 
     .eyebrow {
       display: inline-flex;
