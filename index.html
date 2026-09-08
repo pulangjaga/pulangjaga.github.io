@@ -1195,27 +1195,7 @@
 
       </div>
     </section>
-
-
-    <!-- NEW RELEASES -->
-
-    <section style="padding-top:0;">
-      <div class="container">
-
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">New Releases</h2>
-            <p class="section-subtitle">
-              Buku yang baru ditambahkan.
-            </p>
-          </div>
-        </div>
-
-        <div class="book-grid" id="newBooks"></div>
-
-      </div>
-    </section>
-
+    
 
     <!-- FEATURES -->
 
@@ -1801,28 +1781,7 @@ let books = [];
           : "<p>Tidak ada featured books.</p>";
     }
 
-
-    /* =================================
-       NEW RELEASE
-    ================================= */
-
-    function renderNewBooks() {
-
-      const newest = books
-        .filter(book => book.newRelease)
-        .sort(
-          (a,b) =>
-            new Date(b.dateAdded) -
-            new Date(a.dateAdded)
-        );
-
-      document.getElementById("newBooks").innerHTML =
-        newest.length
-          ? newest.map(bookCard).join("")
-          : "<p>Belum ada buku baru.</p>";
-    }
-
-
+    
     /* =================================
        GENRE FILTER
     ================================= */
@@ -2217,7 +2176,6 @@ let books = [];
 
     populateGenres();
     renderFeatured();
-    renderNewBooks();
     renderCatalog();
 
   } catch (error) {
@@ -2227,7 +2185,6 @@ let books = [];
 
     populateGenres();
     renderFeatured();
-    renderNewBooks();
     renderCatalog();
   }
 }
