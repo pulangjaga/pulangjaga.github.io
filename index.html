@@ -1748,9 +1748,11 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbwHYL_pFcwjZSsjPA7rThsEefczMw1QYz4pdSNvFk8npEAiQrjHeDq2eAvUzMStJ9-x/exec";
 
 let books = [];
+let selectedBook = null;
 
-
-    let selectedBook = null;
+let cart = JSON.parse(
+  localStorage.getItem("pulangjagaCart")
+) || [];
 
 
     /* =================================
@@ -2203,6 +2205,57 @@ let books = [];
        INITIALIZE
     ================================= */
 
+function addToCart(bookId) {
+  const book = books.find(book => book.id === bookId);
+  if (!book) return;
+
+  const existing = cart.find(item => item.id === bookId);
+
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    cart.push({
+      id: bookId,
+      quantity: 1
+    });
+  }
+
+  localStorage.setItem(
+    "pulangjagaCart",
+    JSON.stringify(cart)
+  );
+
+  updateCartCount();
+
+  showToast(`${book.title} ditambahkan ke cart.`);
+}
+
+
+    function updateCartCount() {
+  const count = cart.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
+
+  document.getElementById("cartCount").textContent = count;
+}
+
+    
+async function loadBooks() {
+  try {
+    const response = await fetch(API_URL);
+
+    if (!response.ok) {
+      throw new Error("Gagal mengambil data katalog.");
+    }
+
+    books = await response.json();
+
+    populateGenres();
+    renderFeatured();
+    renderCatalog();
+    
+    
     async function loadBooks() {
   try {
     const response = await fetch(API_URL);
@@ -2228,6 +2281,7 @@ let books = [];
   }
 }
 
+updateCartCount();
 loadBooks();
 
   </script>
