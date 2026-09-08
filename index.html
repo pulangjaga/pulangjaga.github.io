@@ -2591,7 +2591,17 @@ async function processCheckout() {
 
     closeCheckout();
 
-    window.snap.pay(result.token, {
+localStorage.setItem(
+  "pulangjagaLastOrder",
+  JSON.stringify({
+    orderId: orderId,
+    email: email,
+    items: items,
+    grossAmount: grossAmount
+  })
+);
+
+window.snap.pay(result.token, {
       onSuccess: function(result) {
         console.log("Payment success:", result);
         showToast("Pembayaran berhasil.");
