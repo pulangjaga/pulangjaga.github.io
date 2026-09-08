@@ -125,6 +125,31 @@
       gap: 10px;
     }
 
+    .cart-button {
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 10px 4px;
+  white-space: nowrap;
+}
+
+.cart-button span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  margin-left: 3px;
+  border-radius: 999px;
+  background: var(--black);
+  color: white;
+  font-size: 11px;
+}
+
     .btn {
       border: 0;
       border-radius: 999px;
@@ -402,6 +427,11 @@
       margin-top: 9px;
     }
 
+.add-cart-btn {
+  width: 100%;
+  margin-top: 12px;
+}
+    
     /* =========================
        FEATURES
     ========================= */
@@ -1082,9 +1112,13 @@
       </nav>
 
       <div class="nav-actions">
-        <a href="#request" class="btn btn-light">Request</a>
-        <a href="#catalog" class="btn btn-dark">Browse Books</a>
-      </div>
+  <a href="#request" class="btn btn-light">Request</a>
+  <a href="#catalog" class="btn btn-dark">Browse Books</a>
+
+  <button class="cart-button" onclick="openCart()">
+    Cart <span id="cartCount">0</span>
+  </button>
+</div>
 
       <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
         ☰
@@ -1759,6 +1793,13 @@ let books = [];
           <div class="book-price">
             ${formatPrice(book.price)}
           </div>
+
+          <button
+  class="btn btn-dark add-cart-btn"
+  onclick="event.stopPropagation(); addToCart('${book.id}')"
+>
+  Add to Cart
+</button>
 
         </article>
       `;
