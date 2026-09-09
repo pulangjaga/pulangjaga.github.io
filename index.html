@@ -1386,6 +1386,29 @@
     font-size: 26px;
   }
 }
+
+@media (max-width: 520px) {
+
+  .book-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px 14px;
+  }
+
+  .book-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .book-title-card {
+    min-height: 40px;
+  }
+
+  .add-cart-btn {
+    margin-top: auto;
+  }
+
+}
     
   </style>
 </head>
