@@ -382,6 +382,35 @@
       gap: 24px;
     }
 
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+    
+    .pagination button {
+      border: 1px solid #ddd;
+      background: white;
+      padding: 8px 13px;
+      border-radius: 6px;
+      cursor: pointer;
+      font: inherit;
+    }
+    
+    .pagination button.active {
+      background: #111;
+      color: white;
+      border-color: #111;
+    }
+    
+    .pagination button:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
     .book-card {
       cursor: pointer;
       transition: transform .2s ease;
@@ -1470,6 +1499,8 @@
 
         <div class="book-grid" id="catalogBooks"></div>
 
+        <div class="pagination" id="pagination"></div>
+
         <div class="no-results" id="noResults">
           Tidak menemukan buku yang sesuai.
           <br><br>
@@ -1951,88 +1982,198 @@ let cart = JSON.parse(
        CATALOG
     ================================= */
 
-    function renderCatalog() {
+    let catalogPage = 1;
 
-      const query =
-        document
-          .getElementById("catalogSearch")
-          .value
-          .toLowerCase()
-          .trim();
+function renderCatalog(resetPage = true) {
 
-      const genre =
-        document.getElementById("genreFilter").value;
+  if (resetPage) {
+    catalogPage = 1;
+  }
 
-      const language =
-        document.getElementById("languageFilter").value;
+  const query =
+    document
+      .getElementById("catalogSearch")
+      .value
+      .toLowerCase()
+      .trim();
 
-      const sort =
-        document.getElementById("sortFilter").value;
+  const genre =
+    document.getElementById("genreFilter").value;
 
+  const language =
+    document.getElementById("languageFilter").value;
 
-      let result = books.filter(book => {
-
-        const searchMatch =
-          !query ||
-          book.title.toLowerCase().includes(query) ||
-          book.author.toLowerCase().includes(query);
-
-        const genreMatch =
-          !genre ||
-          book.genre.includes(genre);
-
-        const languageMatch =
-          !language ||
-          book.language === language;
-
-        return (
-          searchMatch &&
-          genreMatch &&
-          languageMatch
-        );
-
-      });
+  const sort =
+    document.getElementById("sortFilter").value;
 
 
-      if (sort === "az") {
+  let result = books.filter(book => {
 
-        result.sort((a,b) =>
-          a.title.localeCompare(b.title)
-        );
+    const searchMatch =
+      !query ||
+      book.title.toLowerCase().includes(query) ||
+      book.author.toLowerCase().includes(query);
 
-      } else {
+    const genreMatch =
+      !genre ||
+      book.genre.includes(genre);
 
-        result.sort(
-          (a,b) =>
-            new Date(b.dateAdded) -
-            new Date(a.dateAdded)
-        );
+    const languageMatch =
+      !language ||
+      book.language === language;
 
-      }
+    return (
+      searchMatch &&
+      genreMatch &&
+      languageMatch
+    );
 
-
-      const container =
-        document.getElementById("catalogBooks");
-
-      const noResults =
-        document.getElementById("noResults");
+  });
 
 
-      if (!result.length) {
+  if (sort === "az") {
 
-        container.innerHTML = "";
-        noResults.style.display = "block";
+    result.sort((a, b) =>
+      a.title.localeCompare(b.title)
+    );
 
-      } else {
+  } else {
 
-        container.innerHTML =
-          result.map(bookCard).join("");
+    result.sort(
+      (a, b) =>
+        new Date(b.dateAdded) -
+        new Date(a.dateAdded)
+    );
 
-        noResults.style.display = "none";
+  }
 
-      }
 
-    }
+  const container =
+    document.getElementById("catalogBooks");
+
+  const noResults =
+    document.getElementById("noResults");
+
+  const pagination =
+    document.getElementById("pagination");
+
+
+  if (!result.length) {
+
+    container.innerHTML = "";
+
+    noResults.style.display = "block";
+
+    pagination.innerHTML = "";
+
+    return;
+
+  }
+
+
+  noResults.style.display = "none";
+
+
+  // 20 BOOKS PER PAGE
+
+  const booksPerPage = 20;
+
+  const totalPages =
+    Math.ceil(result.length / booksPerPage);
+
+
+  if (catalogPage > totalPages) {
+    catalogPage = totalPages;
+  }
+
+
+  const start =
+    (catalogPage - 1) * booksPerPage;
+
+  const end =
+    start + booksPerPage;
+
+  const pageBooks =
+    result.slice(start, end);
+
+
+  container.innerHTML =
+    pageBooks
+      .map(bookCard)
+      .join("");
+
+
+  // PAGINATION
+
+  if (totalPages <= 1) {
+
+    pagination.innerHTML = "";
+
+    return;
+
+  }
+
+
+  let paginationHTML = "";
+
+
+  paginationHTML += `
+    <button
+      onclick="changeCatalogPage(${catalogPage - 1})"
+      ${catalogPage === 1 ? "disabled" : ""}
+    >
+      ←
+    </button>
+  `;
+
+
+  for (
+    let i = 1;
+    i <= totalPages;
+    i++
+  ) {
+
+    paginationHTML += `
+      <button
+        class="${i === catalogPage ? "active" : ""}"
+        onclick="changeCatalogPage(${i})"
+      >
+        ${i}
+      </button>
+    `;
+
+  }
+
+
+  paginationHTML += `
+    <button
+      onclick="changeCatalogPage(${catalogPage + 1})"
+      ${catalogPage === totalPages ? "disabled" : ""}
+    >
+      →
+    </button>
+  `;
+
+
+  pagination.innerHTML =
+    paginationHTML;
+
+}
+
+
+function changeCatalogPage(page) {
+
+  catalogPage = page;
+
+  renderCatalog(false);
+
+  document
+    .getElementById("catalog")
+    .scrollIntoView({
+      behavior: "smooth"
+    });
+
+}
 
 
     /* =================================
