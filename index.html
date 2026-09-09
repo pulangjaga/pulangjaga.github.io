@@ -1906,13 +1906,16 @@ let cart = JSON.parse(
 
     function renderFeatured() {
 
-      const featured = books.filter(book => book.featured);
+  const featured =
+    books
+      .filter(book => book.featured)
+      .slice(0, 4);
 
-      document.getElementById("featuredBooks").innerHTML =
-        featured.length
-          ? featured.map(bookCard).join("")
-          : "<p>Tidak ada featured books.</p>";
-    }
+  document.getElementById("featuredBooks").innerHTML =
+    featured.length
+      ? featured.map(bookCard).join("")
+      : "<p>Tidak ada featured books.</p>";
+}
 
     
     /* =================================
