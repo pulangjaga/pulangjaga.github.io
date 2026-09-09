@@ -447,11 +447,11 @@
       line-height: 1.15;
     }
 
-    .book-title-card {
+     .book-title-card {
       font-size: 16px;
       font-weight: 750;
       line-height: 1.25;
-      min-height: 40px;
+      min-height: 60px;
     }
 
     .book-author {
@@ -468,7 +468,7 @@
 
      .add-cart-btn {
       width: 100%;
-      margin-top: 12px;
+      margin-top: auto;
     }
     
     /* =========================
@@ -923,8 +923,8 @@
       }
 
       .book-grid {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px 14px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 28px 14px;
       }
 
       .features {
@@ -1986,7 +1986,10 @@ let cart = JSON.parse(
   const featured =
     books
       .filter(book => book.featured)
-      .slice(0, 8);
+      .slice(
+        0,
+        window.innerWidth <= 700 ? 2 : 8
+      );
 
   document.getElementById("featuredBooks").innerHTML =
     featured.length
@@ -2122,7 +2125,10 @@ function renderCatalog(resetPage = true) {
 
   // 20 BOOKS PER PAGE
 
-  const booksPerPage = 20;
+  const booksPerPage =
+    window.innerWidth <= 700
+      ? 4
+      : 16;
 
   const totalPages =
     Math.ceil(result.length / booksPerPage);
