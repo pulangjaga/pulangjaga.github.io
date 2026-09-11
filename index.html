@@ -867,6 +867,48 @@
       transform: translate(-50%, 0);
     }
 
+
+    
+/* =========================
+   PAYMENT SUCCESS
+========================= */
+
+.success-box {
+  max-width: 430px;
+  text-align: center;
+  padding: 45px 35px;
+}
+
+.success-icon {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 22px;
+  border-radius: 50%;
+  background: var(--black);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.success-box h2 {
+  margin-top: 10px;
+  font-size: 30px;
+  letter-spacing: -1px;
+}
+
+.success-box p {
+  margin: 15px auto 25px;
+  max-width: 320px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+    
+
+    
     /* =========================
        MOBILE
     ========================= */
@@ -1975,6 +2017,35 @@
   <div class="toast" id="toast"></div>
 
 
+    <!-- =========================
+     PAYMENT SUCCESS
+========================= -->
+
+<div class="modal" id="paymentSuccessModal">
+  <div class="modal-box success-box">
+
+    <div class="success-icon">✓</div>
+
+    <div class="payment-label">Payment Successful</div>
+
+    <h2>Pembayaran berhasil.</h2>
+
+    <p>
+      Terima kasih. Link download buku kamu sudah dikirim ke email.
+  Jangan lupa cek folder Spam atau Junk kalau email belum terlihat.
+    </p>
+
+    <button
+      class="btn btn-dark"
+      onclick="closePaymentSuccess()"
+    >
+      Continue Browsing
+    </button>
+
+  </div>
+</div>
+    
+
   <script>
 
     /* =================================
@@ -2486,6 +2557,15 @@ function changeCatalogPage(page) {
     }
 
 
+    function closePaymentSuccess() {
+      const modal =
+        document.getElementById("paymentSuccessModal");
+    
+      modal.classList.remove("active");
+      document.body.style.overflow = "";
+    }
+
+    
     /* =================================
        INITIALIZE
     ================================= */
@@ -2864,20 +2944,22 @@ async function verifyDokuPayment() {
         result.success &&
         result.status === "SUCCESS"
       ) {
-        showToast(
-          "Pembayaran berhasil. Link download sudah dikirim ke email."
-        );
-
+        document
+          .getElementById("paymentSuccessModal")
+          .classList.add("active");
+      
+        document.body.style.overflow = "hidden";
+      
         localStorage.removeItem(
           "pulangjagaLastOrder"
         );
-
+      
         window.history.replaceState(
           {},
           document.title,
           window.location.pathname
         );
-
+      
         return;
       }
 
