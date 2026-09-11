@@ -2800,6 +2800,15 @@ async function processCheckout() {
     return;
   }
 
+  const button = document.querySelector(
+    "#checkoutModal button[onclick='processCheckout()']"
+  );
+  
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Connecting to payment...";
+  }
+  
   const orderId = "PJ-" + Date.now();
 
   const items = cart.map(item => {
@@ -2870,6 +2879,12 @@ window.location.href = result.payment_url;
 
   } catch (error) {
     console.error("Checkout error:", error);
+  
+    if (button) {
+      button.disabled = false;
+      button.textContent = "Continue to Payment";
+    }
+  
     showToast(
       error.message || "Gagal menghubungkan ke pembayaran."
     );
