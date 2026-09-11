@@ -2757,15 +2757,17 @@ async function processCheckout() {
 
     const result = await response.json();
 
-    console.log("Midtrans response:", result);
+    console.log("DOKU response:", result);
 
-    if (!result.success) {
-      throw new Error(
-        result.error || "Gagal membuat pembayaran."
-      );
-    }
+if (!result.success) {
+  throw new Error(
+    result.error || "Gagal membuat pembayaran."
+  );
+}
 
-    closeCheckout();
+if (!result.payment_url) {
+  throw new Error("Payment URL DOKU tidak ditemukan.");
+}
 
 localStorage.setItem(
   "pulangjagaLastOrder",
@@ -2777,26 +2779,9 @@ localStorage.setItem(
   })
 );
 
-window.snap.pay(result.token, {
-      onSuccess: function(result) {
-        console.log("Payment success:", result);
-        showToast("Pembayaran berhasil.");
-      },
+closeCheckout();
 
-      onPending: function(result) {
-        console.log("Payment pending:", result);
-        showToast("Pembayaran masih menunggu.");
-      },
-
-      onError: function(result) {
-        console.log("Payment error:", result);
-        showToast("Pembayaran gagal.");
-      },
-
-      onClose: function() {
-        console.log("Payment popup closed.");
-      }
-    });
+window.location.href = result.payment_url;
 
   } catch (error) {
     console.error("Checkout error:", error);
