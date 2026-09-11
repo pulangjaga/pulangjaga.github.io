@@ -2746,6 +2746,11 @@ async function processCheckout() {
   formData.append("email", email);
   formData.append("items", JSON.stringify(items));
 
+  formData.append(
+    "callbackUrl",
+    "https://pulangjaga.github.io/"
+  );
+
   try {
     const response = await fetch(
       "https://script.google.com/macros/s/AKfycbwHYL_pFcwjZSsjPA7rThsEefczMw1QYz4pdSNvFk8npEAiQrjHeDq2eAvUzMStJ9-x/exec",
@@ -2816,6 +2821,86 @@ window.location.href = result.payment_url;
     renderCatalog();
   }
 }
+
+async function verifyDokuPayment() {
+  const params = new URLSearchParams(window.location.search);
+
+  const payment = params.get("payment");
+  const orderId = params.get("orderId");
+
+  if (payment !== "success" || !orderId) {
+    return;
+  }
+
+  showToast("Memverifikasi pembayaran...");
+
+  const endpoint =
+    "https://script.google.com/macros/s/AKfycbwHYL_pFcwjZSsjPA7rThsEefczMw1QYz4pdSNvFk8npEAiQrjHeDq2eAvUzMStJ9-x/exec";
+
+  const maxAttempts = 18;
+  const delay = 10000;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const response = await fetch(
+        endpoint,
+        {
+          method: "POST",
+          body: new URLSearchParams({
+            action: "checkDokuStatus",
+            orderId: orderId
+          })
+        }
+      );
+
+      const result = await response.json();
+
+      console.log(
+        "DOKU payment status:",
+        result
+      );
+
+      if (
+        result.success &&
+        result.status === "SUCCESS"
+      ) {
+        showToast(
+          "Pembayaran berhasil. Link download sudah dikirim ke email."
+        );
+
+        localStorage.removeItem(
+          "pulangjagaLastOrder"
+        );
+
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
+
+        return;
+      }
+
+    } catch (error) {
+      console.error(
+        "Payment verification error:",
+        error
+      );
+    }
+
+    if (attempt < maxAttempts) {
+      await new Promise(resolve =>
+        setTimeout(resolve, delay)
+      );
+    }
+  }
+
+  showToast(
+    "Pembayaran belum bisa diverifikasi. Coba refresh beberapa saat lagi."
+  );
+}
+
+verifyDokuPayment();
 
 loadBooks();
 updateCartCount();
