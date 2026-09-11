@@ -2912,6 +2912,12 @@ async function verifyDokuPayment() {
     return;
   }
 
+  document
+    .getElementById("paymentSuccessModal")
+    .classList.add("active");
+  
+  document.body.style.overflow = "hidden";
+  
   showToast("Memverifikasi pembayaran...");
 
   const endpoint =
